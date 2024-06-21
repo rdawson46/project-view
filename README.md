@@ -1,6 +1,6 @@
 # Project Manager
 ## Ideas
-- save markdown to an local dir based on the current project name
+- save markdown to a local dir based on the current project name
 
 ## Feature Ideas
  - note taking

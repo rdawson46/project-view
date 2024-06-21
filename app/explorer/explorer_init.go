@@ -1,9 +1,9 @@
-package app
+package explorer
 
 import (
     tea "github.com/charmbracelet/bubbletea"
 )
 
-func (a App) Init() tea.Cmd {
+func (e Explorer) Init() tea.Cmd {
     return nil
 }

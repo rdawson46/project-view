@@ -1,9 +1,9 @@
-package app
+package finder
 
 import (
     tea "github.com/charmbracelet/bubbletea"
 )
 
-func (a App) Init() tea.Cmd {
+func (f Finder) Init() tea.Cmd {
     return nil
 }
