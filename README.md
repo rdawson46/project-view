@@ -7,8 +7,13 @@
  - main porject path
  - per file todos/notes
  - markdown rendering
- - linking
+ - linking within pages
  - git integration
 
 ## Where to go 
- - neovim plugin or in terminal with go
+ - decide what each screen should hold
+ - create proper directories on machine needed
+ - figure out how to map everything together
+
+### Issues to keep in mind
+ - directories renamed
