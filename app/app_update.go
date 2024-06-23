@@ -2,7 +2,6 @@ package app
 
 import (
     tea "github.com/charmbracelet/bubbletea"
-    "strconv"
 )
 
 func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -17,14 +16,14 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         switch str {
         case "q", "ctrl+c":
             return a, tea.Quit
-        default:
-            x, err := strconv.Atoi(str)
-
-            if err != nil {
-                break
-            }
-
-            a = a.changeScreen(x)
+        case "?":
+            a = a.changeScreen(Help)
+        case "f":
+            a = a.changeScreen(Finder)
+        case "e":
+            a = a.changeScreen(File)
+        case "p":
+            a = a.changeScreen(Explorer)
         }
     }   
 

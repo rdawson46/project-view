@@ -25,10 +25,11 @@ func (h Help) View() string {
 
     keys := ""
 
-    keys += fmt.Sprintln("1: View All Projects")
-    keys += fmt.Sprintln("2: View Current Project")
-    keys += fmt.Sprintln("3: Open Finder")
-    keys += fmt.Sprintln("4: Open Help")
+    keys += fmt.Sprintln("e: View File in Project")
+    keys += fmt.Sprintln("p: View Current Project")
+    keys += fmt.Sprintln("f: Open Finder")
+    keys += fmt.Sprintln("?: Open Help")
+    keys += fmt.Sprintln("q: Quit")
 
     s += body.Render(keys)
     return s
