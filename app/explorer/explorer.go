@@ -12,9 +12,10 @@ type Explorer struct {
     exist bool   // flag to indicate if show prompt user for new project
     localPath string
     tree *TreeData
+    height, width int
 }
 
-func NewExplorer(p string) Explorer {
+func NewExplorer(p string, height, width int) Explorer {
     // get current folder location
     wd, err := os.Getwd()
 
@@ -27,11 +28,12 @@ func NewExplorer(p string) Explorer {
     _, projectName := path.Split(wd)
 
     // check if new
-    pojectPath := path.Join(p, projectName)
+    projectPath := path.Join(p, projectName)
 
-    info, err := os.Stat(pojectPath)
+    info, err := os.Stat(projectPath)
 
     var exist bool
+    var tree *TreeData
     if os.IsNotExist(err) {
         exist = false
         
@@ -44,20 +46,36 @@ func NewExplorer(p string) Explorer {
         os.Exit(1)
     } else {
         exist = true
+
+        // TODO: make tree data and get entries
+        entries, err := os.ReadDir(projectPath)
+
+        if err != nil {
+            fmt.Println("Error when reading known dir:", err.Error())
+            os.Exit(1)
+        }
+
+        names := make([]string, len(entries))
+        for i, entry := range entries {
+            names[i] = entry.Name()
+        }
+
+        tree = newTreeData(names)
+
+        if tree == nil {
+            fmt.Println("Tree wasn't produced")
+            os.Exit(1)
+        }
     }
-
-    // TODO: do this in UI
-    // if so prompt user if they want to make a new project
-
-    // TODO: figure out how to handle this
-    // if not, send to finder or exit
-    // figure out how to make a new one
 
     // open up
     return Explorer{
         name: projectName,
         exist: exist,
         localPath: p,
+        tree: tree,
+        height: max(height - 5, 0),
+        width: max(width - 5, 0),
     }
 }
 
@@ -69,6 +87,9 @@ func NewExplorerByName(p, name string) Explorer {
 
 // TODO: make a tree system
 // make tree for project and store in path.Join(e.localPath, e.name)
+
+// BUG: need a way to remove/filter certain files/folder
+// ex: node_modules, go.mod, ...
 func (e Explorer) NewProject() Explorer {
     newDir := path.Join(e.localPath, e.name)
 
@@ -80,7 +101,6 @@ func (e Explorer) NewProject() Explorer {
     }
 
     e.exist = true
-
 
     // TODO: make tree
     wd, err := os.Getwd()
@@ -96,6 +116,8 @@ func (e Explorer) NewProject() Explorer {
         fmt.Println("Couldn't read wd:", err.Error())
         os.Exit(1)
     }
+
+    treeEntries := make([]string, 0)
 
     for _, entry := range entires {
         if entry.IsDir() {
@@ -114,17 +136,62 @@ func (e Explorer) NewProject() Explorer {
             /*
             IDEAS:
             1. Make a dir for each file and then make a todo.md and notes.md in the dir ⭐
+
             2. make sub files
                 * [name]-todo.md
                 * [name]-notes.md
             */
+            newFilePath := path.Join(newDir, name)
+            err := os.Mkdir(newFilePath, os.ModePerm)
+
+            if os.IsExist(err) {
+                continue
+            }
+
+            if err != nil {
+                fmt.Println("Error making dir for file:", err.Error())
+                os.Exit(1)
+            }
+
+
+            _, err = os.Create(path.Join(newFilePath, "todo.md"))
+
+            if err != nil {
+                fmt.Println("Error when creating todo for:", newFilePath, err.Error())
+                os.Exit(1)
+            }
+
+            _, err = os.Create(path.Join(newFilePath, "notes.md"))
+
+            if err != nil {
+                fmt.Println("Error when creating notes for:", newFilePath, err.Error())
+                os.Exit(1)
+            }
+
+            treeEntries = append(treeEntries, name)
         }
     }
 
+    e.tree = newTreeData(treeEntries)
     return e
 }
 
 type TreeData struct {
-    entries []string
-    current int
+    entries []string // name of each dir
+    current int // idx of currently highlighted/selected dir
+}
+
+func newTreeData(entries []string) *TreeData {
+    return &TreeData{
+        entries: entries,
+        current: 0,
+    }
+}
+
+func max(x, y int) int {
+    if x > y {
+        return x
+    } else {
+        return y
+    }
 }

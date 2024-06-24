@@ -10,6 +10,10 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         a.height = message.Height - 2
         a.width = message.Width - 2
 
+        var cmd tea.Cmd
+        a.screen, cmd = a.screen.Update(msg)
+        return a, cmd
+
     case tea.KeyMsg:
         str := message.String()
 

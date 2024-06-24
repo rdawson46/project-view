@@ -64,7 +64,7 @@ func NewApp() App {
     // if not found, ask if one should be created (explorer job?)
     return App {
         currentScreen: 0,
-        screen: explorer.NewExplorer(path),
+        screen: explorer.NewExplorer(path, 0, 0),
         path: path,
     }
 }
@@ -74,7 +74,7 @@ func (a App) changeScreen(screenType int, name ...string) App {
     switch screenType {
     case Explorer:
         a.currentScreen = screenType
-        a.screen = explorer.NewExplorer(a.path)
+        a.screen = explorer.NewExplorer(a.path, a.height, a.width)
 
     case File:
         a.currentScreen = screenType
@@ -89,5 +89,11 @@ func (a App) changeScreen(screenType int, name ...string) App {
         a.screen = help.NewHelp()
     }
 
+    return a
+}
+
+func (a App) resize(height, width int) App {
+    a.height = height
+    a.width = width
     return a
 }
