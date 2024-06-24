@@ -5,13 +5,13 @@ import (
 )
 
 func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    switch msg := msg.(type) {
+    switch message := msg.(type) {
     case tea.WindowSizeMsg:
-        a.height = msg.Height - 2
-        a.width = msg.Width - 2
+        a.height = message.Height - 2
+        a.width = message.Width - 2
 
     case tea.KeyMsg:
-        str := msg.String()
+        str := message.String()
 
         switch str {
         case "q", "ctrl+c":
@@ -24,6 +24,10 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
             a = a.changeScreen(File)
         case "p":
             a = a.changeScreen(Explorer)
+        default:
+            var cmd tea.Cmd
+            a.screen, cmd = a.screen.Update(msg)
+            return a, cmd
         }
     }   
 
