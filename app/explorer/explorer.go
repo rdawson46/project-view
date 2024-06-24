@@ -3,13 +3,15 @@ package explorer
 import (
 	"fmt"
 	"os"
-    "path"
+	"path"
+    "strings"
 )
 
 type Explorer struct {
     name  string // temp variable name, copies app.path and appends
     exist bool   // flag to indicate if show prompt user for new project
     localPath string
+    tree *TreeData
 }
 
 func NewExplorer(p string) Explorer {
@@ -65,6 +67,8 @@ func NewExplorerByName(p, name string) Explorer {
     }
 }
 
+// TODO: make a tree system
+// make tree for project and store in path.Join(e.localPath, e.name)
 func (e Explorer) NewProject() Explorer {
     newDir := path.Join(e.localPath, e.name)
 
@@ -77,5 +81,50 @@ func (e Explorer) NewProject() Explorer {
 
     e.exist = true
 
+
+    // TODO: make tree
+    wd, err := os.Getwd()
+
+    if err != nil {
+        fmt.Println("Couldn't get wd:", err.Error())
+        os.Exit(1)
+    }
+
+    entires, err := os.ReadDir(wd)
+
+    if err != nil {
+        fmt.Println("Couldn't read wd:", err.Error())
+        os.Exit(1)
+    }
+
+    for _, entry := range entires {
+        if entry.IsDir() {
+            // not sure how I want to impl this
+        } else {
+            name := entry.Name()
+
+            split := strings.Split(name, ".")
+
+            if split[0] == "" {
+                continue
+            }
+
+            name = split[0]
+
+            /*
+            IDEAS:
+            1. Make a dir for each file and then make a todo.md and notes.md in the dir ⭐
+            2. make sub files
+                * [name]-todo.md
+                * [name]-notes.md
+            */
+        }
+    }
+
     return e
+}
+
+type TreeData struct {
+    entries []string
+    current int
 }
