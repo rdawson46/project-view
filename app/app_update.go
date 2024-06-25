@@ -33,6 +33,10 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
             a.screen, cmd = a.screen.Update(msg)
             return a, cmd
         }
+    default:
+        var cmd tea.Cmd
+        a.screen, cmd = a.screen.Update(msg)
+        return a, cmd
     }   
 
     return a, nil

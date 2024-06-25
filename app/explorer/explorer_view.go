@@ -1,8 +1,9 @@
 package explorer
 
 import (
-    "fmt"
-    "github.com/charmbracelet/lipgloss"
+	"fmt"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 var (
@@ -16,7 +17,9 @@ var (
         Bold(true).
         Foreground(lipgloss.Color("45"))
 
-    file_view = lipgloss.NewStyle() 
+    file_view = lipgloss.NewStyle().
+        Border(lipgloss.RoundedBorder(), true).
+        BorderForeground(lipgloss.Color("#454545"))
 )
 
 func (e Explorer) View() string {
@@ -29,14 +32,45 @@ func (e Explorer) View() string {
 
 func (e Explorer) projectView() string {
     if e.tree != nil {
-        var s string
+        if e.content == nil {
+            return e.dirView()
+        }
 
-        s += e.dirView()
+        d := e.dirView()
+        c := e.contentView()
 
-        return s
+        joined := lipgloss.JoinHorizontal(
+            lipgloss.Center,
+            d,
+            c,
+        )
+        
+        return joined
     }
 
     return "No tree found"
+}
+
+func (e Explorer) contentView() string {
+    file_view = file_view.Width(e.width / 3).Height(e.height)
+
+    title := lipgloss.NewStyle().Bold(true).Align(lipgloss.Center)
+
+    selected := e.tree.entries[e.tree.selected]
+
+    switch e.focus {
+    case notes:
+        selected += "\\notes.md"
+    case todo:
+        selected += "\\todo.md"
+    }
+
+    selected = title.Render(selected)
+    selected += "\n"
+
+    text := selected + e.content.text
+
+    return file_view.Render(text)
 }
 
 func (e Explorer) dirView() string {
@@ -55,11 +89,6 @@ func (e Explorer) dirView() string {
 
     return dir_holder.Render(s)
 }
-
-func (e Explorer) textView() string {
-    return ""
-}
-
 
 func (e Explorer) newProjectPrompt() string {
     return fmt.Sprintf("Would you like to make a new project (%s)? (y/n)", e.name)

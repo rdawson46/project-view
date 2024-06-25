@@ -4,7 +4,6 @@
 
 ## Feature Ideas
  - note taking
- - main porject path
  - per file todos/notes
  - markdown rendering
  - linking within pages

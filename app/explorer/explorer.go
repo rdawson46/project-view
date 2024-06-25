@@ -7,11 +7,18 @@ import (
     "strings"
 )
 
+const (
+    todo = iota
+    notes
+)
+
 type Explorer struct {
-    name  string // temp variable name, copies app.path and appends
-    exist bool   // flag to indicate if show prompt user for new project
-    localPath string
-    tree *TreeData
+    name          string // temp variable name, copies app.path and appends
+    exist         bool   // flag to indicate if show prompt user for new project
+    localPath     string
+    focus         int
+    tree          *TreeData
+    content       *FileContent
     height, width int
 }
 
@@ -47,7 +54,6 @@ func NewExplorer(p string, height, width int) Explorer {
     } else {
         exist = true
 
-        // TODO: make tree data and get entries
         entries, err := os.ReadDir(projectPath)
 
         if err != nil {
@@ -74,8 +80,10 @@ func NewExplorer(p string, height, width int) Explorer {
         exist: exist,
         localPath: p,
         tree: tree,
-        height: max(height - 5, 0),
-        width: max(width - 5, 0),
+        content: &FileContent{},
+        focus: notes,
+        height: max(height - 2, 0),
+        width: max(width - 2, 0),
     }
 }
 
@@ -177,8 +185,9 @@ func (e Explorer) NewProject() Explorer {
 }
 
 type TreeData struct {
-    entries []string // name of each dir
-    current int // idx of currently highlighted/selected dir
+    entries  []string // name of each dir
+    current  int // idx of currently highlighted/selected dir
+    selected int
 }
 
 func newTreeData(entries []string) *TreeData {
@@ -194,4 +203,8 @@ func max(x, y int) int {
     } else {
         return y
     }
+}
+
+type FileContent struct {
+    text string
 }

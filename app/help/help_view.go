@@ -18,7 +18,7 @@ var (
 
 func (h Help) View() string {
     s := ""
-    heading := header.Render("Help\n")
+    heading := header.Render("Help")
 
     s += heading
     s += "\n"
