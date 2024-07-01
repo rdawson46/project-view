@@ -25,7 +25,7 @@ func (e Explorer) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         file := message.file
         
         // read correct file
-        switch e.focus {
+        switch e.mdType {
         case todo:
             p := path.Join(e.localPath, e.name, file, "todo.md")
             return e, readFile(p)
@@ -56,17 +56,29 @@ func (e Explorer) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
                 }
 
             case "n":
-                switch e.focus {
+                switch e.mdType {
                 case notes:
-                    e.focus = todo
+                    e.mdType = todo
                 case todo:
-                    e.focus = notes
+                    e.mdType = notes
                 }
                 return e, refreshFile(e.tree.entries[e.tree.selected])
 
             case "enter":
-                e.tree.selected = e.tree.current
+                if e.focus == 0 {
+                    e.tree.selected = e.tree.current
+                } else {
+                    // enter a typing mode
+                }
                 return e, refreshFile(e.tree.entries[e.tree.selected])
+
+            case "tab":
+                if e.focus == 0 {
+                    e.focus = 1
+                } else {
+                    e.focus = 0
+                }
+                return e, nil
             }
         }
     }

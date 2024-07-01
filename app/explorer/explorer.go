@@ -16,10 +16,11 @@ type Explorer struct {
     name          string // temp variable name, copies app.path and appends
     exist         bool   // flag to indicate if show prompt user for new project
     localPath     string
-    focus         int
+    mdType        int // decides notes.md vs todo.md
     tree          *TreeData
     content       *FileContent
     height, width int
+    focus         int // decides which menu is hightlighted
 }
 
 func NewExplorer(p string, height, width int) Explorer {
@@ -81,9 +82,10 @@ func NewExplorer(p string, height, width int) Explorer {
         localPath: p,
         tree: tree,
         content: &FileContent{},
-        focus: notes,
+        mdType: notes,
         height: max(height - 2, 0),
         width: max(width - 2, 0),
+        focus: 0,
     }
 }
 

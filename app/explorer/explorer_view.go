@@ -52,13 +52,17 @@ func (e Explorer) projectView() string {
 }
 
 func (e Explorer) contentView() string {
-    file_view = file_view.Width(e.width / 3).Height(e.height)
+    file_view_temp := file_view.Width(e.width * 3 / 5).Height(e.height)
+
+    if e.focus == 1 {
+        file_view_temp = file_view_temp.BorderForeground(lipgloss.Color("21"))
+    }
 
     title := lipgloss.NewStyle().Bold(true).Align(lipgloss.Center)
 
     selected := e.tree.entries[e.tree.selected]
 
-    switch e.focus {
+    switch e.mdType {
     case notes:
         selected += "\\notes.md"
     case todo:
@@ -70,11 +74,15 @@ func (e Explorer) contentView() string {
 
     text := selected + e.content.text
 
-    return file_view.Render(text)
+    return file_view_temp.Render(text)
 }
 
 func (e Explorer) dirView() string {
-    dir_holder = dir_holder.Width(e.width / 5).Height(e.height)
+    dir_holder_temp := dir_holder.Width(e.width / 5).Height(e.height)
+
+    if e.focus == 0 {
+        dir_holder_temp = dir_holder_temp.BorderForeground(lipgloss.Color("21"))
+    }
 
     var s string
 
@@ -87,7 +95,7 @@ func (e Explorer) dirView() string {
         }
     }
 
-    return dir_holder.Render(s)
+    return dir_holder_temp.Render(s)
 }
 
 func (e Explorer) newProjectPrompt() string {
